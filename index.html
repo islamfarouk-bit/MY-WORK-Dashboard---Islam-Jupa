@@ -692,6 +692,43 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   .obi-opts button { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
   .obi-opts button.on { background: #e30613; border-color: #e30613; color: #fff; font-weight: 700; }
   .obi-pv img { max-width: 100%; display: block; margin: 10px auto; border-radius: 12px; border: 1px solid var(--color-border-line); }
+
+  /* absence drill-down */
+  .afd-sens { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 10px; }
+  .afd-card { font: inherit; text-align: start; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 12px; padding: 12px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 7px; }
+  .afd-card:hover { border-color: #e30613; }
+  .afd-card.on { border-color: #e30613; box-shadow: inset 0 0 0 1px #e30613; background: color-mix(in srgb, #e30613 6%, var(--color-bg)); }
+  .afd-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .afd-name { font-weight: 700; }
+  .afd-num { font-size: 1.6rem; font-weight: 800; color: #e30613; font-variant-numeric: tabular-nums; }
+  .afd-sub { font-size: .76rem; color: var(--color-fg-muted); }
+  .afd-bars { display: flex; flex-direction: column; gap: 4px; }
+  .afd-bar { display: grid; grid-template-columns: minmax(5rem, 8rem) 1fr 3.2rem; gap: 6px; align-items: center; font-size: .75rem; }
+  .afd-bar span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .afd-track { height: 7px; border-radius: 999px; background: var(--color-border-line); overflow: hidden; }
+  .afd-track i { display: block; height: 100%; background: #e30613; border-radius: 999px; }
+  .afd-pct { text-align: end; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .afd-h { display: flex; align-items: baseline; gap: 10px; margin: var(--cds-gap-lg) 0 var(--cds-gap-sm); font-weight: 800; font-size: 1.05rem; }
+  .afd-h small { color: var(--color-fg-muted); font-weight: 400; font-size: var(--cds-font-size-caption); }
+  .afd-two { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--cds-gap-md); align-items: start; }
+  @media (max-width: 52rem) { .afd-two { grid-template-columns: 1fr; } }
+  .afd-hubs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); gap: 8px; }
+  .afd-panel { background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 12px; padding: 12px 14px; }
+  .afd-panel h5 { margin: 0 0 8px; font-size: .95rem; font-weight: 800; }
+  .afd-detail { margin-top: var(--cds-gap-lg); border: 1px solid var(--color-border-line); border-radius: 14px; overflow: hidden; }
+  .afd-dh { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 14px 18px; background: linear-gradient(120deg, #3a0a10, #e30613); color: #fff; }
+  .afd-dh h4 { margin: 0; font-size: 1.35rem; font-weight: 800; }
+  .afd-dh span { opacity: .9; font-size: var(--cds-font-size-caption); }
+  .afd-db { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .afd-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); gap: 8px; }
+  .afd-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 10px; padding: 10px 12px; border-top: 3px solid var(--c, #e30613); }
+  .afd-tile span { display: block; font-size: .75rem; color: var(--color-fg-muted); }
+  .afd-tile b { font-size: 1.45rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .afd-tile small { display: block; font-size: .7rem; color: var(--color-fg-muted); }
+  .afd-mixes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 10px; }
+  .af-times { display: inline-block; min-width: 1.8rem; text-align: center; background: #e30613; color: #fff; border-radius: 999px; padding: 1px 8px; font-weight: 800; }
+  .af-times.t2 { background: #d97706; }
+  .af-dates { font-size: .75rem; color: var(--color-fg-muted); white-space: normal; direction: ltr; text-align: start; unicode-bidi: plaintext; }
   /* logos */
   .mw-logo { height: 34px; width: auto; display: block; }
   .sec-logo { height: 30px; width: auto; display: block; margin-bottom: 10px; position: relative; z-index: 1; }
@@ -775,6 +812,26 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
         <span class="af-tile-label">Ahmed Ali</span>
         <span class="af-tile-num" data-draw="n-ahmed" data-source="by_agent" data-field="Absences" data-where="Agent=Ahmed Ali">—</span>
       </button>
+    </div>
+
+    <div class="af-card" style="margin-bottom: var(--cds-gap-md)">
+      <h3 class="af-cardtitle">السينيورز وهباتهم</h3>
+      <p class="af-info" data-draw="af-period">—</p>
+      <div data-source="af_by_hub" data-draw="af-drill"></div>
+    </div>
+
+    <div class="af-card" style="margin-bottom: var(--cds-gap-md)">
+      <h3 class="af-cardtitle">أكتر المناديب غياباً (غياب متكرر)</h3>
+      <p class="af-info">المناديب اللي اتسجل غيابهم في أكتر من يوم — بيتفلتر حسب السينيور أو الهب اللي مختاره.</p>
+      <div class="af-tablebox" style="max-height: 26rem">
+        <table class="af-table" data-source="af_repeat" data-row-key="Star Id">
+          <thead><tr>
+            <th data-field="Full Name">المندوب</th><th data-field="HUB">الهب</th><th data-field="Agent">السينيور</th>
+            <th data-field="Contractor">المقاول</th><th data-field="Times">مرات الغياب</th><th data-field="Dates">الأيام</th><th>WhatsApp</th>
+          </tr></thead>
+          <tbody data-draw="af-repeat"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="af-card">
@@ -1133,7 +1190,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     'saied': { ar: 'سعيد', phone: '01070881143' },
     'Ahmed Ali': { ar: 'أحمد علي', phone: '01040097499' },
   };
-  window.AF = { agent: 'all', q: '', sent: new Set(), cur: null, sel: new Set(), bulk: null, bi: 0 };
+  window.AF = { agent: 'all', hub: '', q: '', sent: new Set(), cur: null, sel: new Set(), bulk: null, bi: 0 };
 
   // Courier phone as stored in the sheet (often without the leading 0) -> international digits, or null if unusable.
   window.afPhone = (raw) => {
@@ -1177,6 +1234,24 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     })),
   });
 
+  dash.calc('af_by_hub', {
+    inputs: ['absences'],
+    title: 'Absences per senior and hub',
+    description: 'For each senior (Agent column) and hub: absence rows and distinct couriers absent.',
+    fn: (rows) => d3.rollups(rows, (v) => ({ Absences: v.length, Couriers: new Set(v.map((r) => r['Star Id'])).size }), (r) => r['Agent'] || '—', (r) => r['HUB'] || '—')
+      .flatMap(([Agent, hubs]) => hubs.map(([HUB, x]) => ({ Agent, HUB, ...x }))).sort((a, b) => b.Absences - a.Absences),
+  });
+  dash.calc('af_repeat', {
+    inputs: ['absences'],
+    title: 'Repeated absences per courier',
+    description: 'Couriers absent on more than one date: number of distinct dates and the dates, most first.',
+    fn: (rows) => d3.rollups(rows, (v) => v, (r) => r['Star Id']).map(([id, v]) => {
+      const dates = [...new Set(v.map((r) => r['Date']))];
+      const last = v[v.length - 1];
+      return { 'Star Id': id, 'Full Name': last['Full Name'], HUB: last['HUB'], Agent: last['Agent'], Contractor: last['Contractor'], Fawry: last['Fawry'], Times: dates.length, Dates: dates.join(' · ') };
+    }).filter((r) => r.Times > 1).sort((a, b) => b.Times - a.Times || a['Full Name'].localeCompare(b['Full Name'])),
+  });
+
   dash.calc('total_absences', {
     inputs: ['absences'],
     title: 'All absences',
@@ -1200,14 +1275,151 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   dash.draw('n-saied', num('by_agent', 'saied'));
   dash.draw('n-ahmed', num('by_agent', 'Ahmed Ali'));
 
+  const of2 = d3.format(',');
   const visibleRows = () => {
     const g = dash.data('absences');
     if (g.status !== 'ok') return null;
     const q = window.AF.q.toLowerCase();
     return g.data.filter((r) =>
       (window.AF.agent === 'all' || r['Agent'] === window.AF.agent) &&
+      (!window.AF.hub || r['HUB'] === window.AF.hub) &&
       (!q || [r['Full Name'], r['HUB'], r['Fawry'], r['Star Id'], r['Contractor']].join(' ').toLowerCase().includes(q)));
   };
+
+
+  // ---- Seniors → hubs → hub detail, and repeated absences
+  const afShares = (rows, field, top) => {
+    const t = rows.length || 1;
+    return d3.rollups(rows, (v) => v.length, (r) => r[field] || '—').sort((a, b) => b[1] - a[1]).slice(0, top || 99).map(([k, n]) => ({ k, n, p: n / t }));
+  };
+  const afBars = (items, el) => {
+    const w = el('div', 'afd-bars');
+    items.forEach((it) => {
+      const r = el('div', 'afd-bar');
+      const tr = el('span', 'afd-track'); const i = el('i'); i.style.width = Math.max(3, 100 * it.p) + '%'; tr.appendChild(i);
+      r.append(el('span', null, it.k + ' (' + it.n + ')'), tr, el('span', 'afd-pct', Math.round(100 * it.p) + '%'));
+      w.appendChild(r);
+    });
+    return w;
+  };
+  dash.draw('af-period', (el) => {
+    const g = dash.data('absences');
+    if (g.status !== 'ok') { el.textContent = '—'; return; }
+    const dates = [...new Set(g.data.map((r) => r['Date']).filter(Boolean))];
+    el.textContent = 'الغيابات في الشيت: ' + (dates.length === 1 ? 'يوم ' + dates[0] : dates.length + ' أيام (' + dates[0] + ' ← ' + dates[dates.length - 1] + ')') + ' · اختار سينيور تظهر هباته والمقاولين الأعلى غياباً، واختار هب يظهر لوحده بكل تفاصيله. النسبة = حصة المقاول أو الهب من غيابات السينيور.';
+  });
+  dash.draw('af-drill', (box) => {
+    const g = dash.data('absences');
+    box.replaceChildren();
+    if (g.status !== 'ok') return;
+    const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+    const A = window.AF, rows = g.data;
+    const LT = dash.data('lm_table');
+    const lm = new Map(LT.status === 'ok' ? LT.data.map((r) => [String(r.Hub).trim().toLowerCase(), r]) : []);
+    // seniors overview
+    const sens = el('div', 'afd-sens');
+    d3.rollups(rows, (v) => v, (r) => r['Agent'] || '—').sort((a, b) => b[1].length - a[1].length).forEach(([name, v]) => {
+      const c = el('button', 'afd-card' + (A.agent === name ? ' on' : '')); c.type = 'button';
+      const top = el('div', 'afd-top'); top.append(el('span', 'afd-name', '👤 ' + name), el('span', 'afd-num', of2(v.length)));
+      c.append(top, el('span', 'afd-sub', new Set(v.map((r) => r['HUB'])).size + ' هب · أعلى مقاولين غياباً:'), afBars(afShares(v, 'Contractor', 3), el));
+      c.addEventListener('click', () => window.afSetAgent(A.agent === name ? 'all' : name));
+      sens.appendChild(c);
+    });
+    box.appendChild(sens);
+
+    if (A.agent !== 'all') {
+      const sv = rows.filter((r) => r['Agent'] === A.agent);
+      const h = el('div', 'afd-h', 'هبات ' + A.agent); h.appendChild(el('small', null, new Set(sv.map((r) => r['HUB'])).size + ' هب · ' + sv.length + ' غياب'));
+      box.appendChild(h);
+      const two = el('div', 'afd-two');
+      const hubs = el('div', 'afd-hubs');
+      d3.rollups(sv, (v) => v, (r) => r['HUB'] || '—').sort((a, b) => b[1].length - a[1].length).forEach(([hub, v]) => {
+        const c = el('button', 'afd-card' + (A.hub === hub ? ' on' : '')); c.type = 'button';
+        const top = el('div', 'afd-top'); top.append(el('span', 'afd-name', hub), el('span', 'afd-num', of2(v.length)));
+        const l = lm.get(String(hub).trim().toLowerCase());
+        const tr = el('span', 'afd-track'); const i = el('i'); i.style.width = (100 * v.length / sv.length) + '%'; tr.appendChild(i);
+        c.append(top, el('span', 'afd-sub', Math.round(100 * v.length / sv.length) + '% من غيابات ' + A.agent + (l && typeof l['Absence %'] === 'number' ? ' · غياب الهب في LM: ' + Math.round(100 * l['Absence %']) + '%' : '')), tr);
+        c.addEventListener('click', () => window.afSetHub(A.hub === hub ? '' : hub));
+        hubs.appendChild(c);
+      });
+      const cp = el('div', 'afd-panel'); cp.appendChild(el('h5', null, 'أعلى المقاولين غياباً عند ' + A.agent));
+      cp.appendChild(afBars(afShares(sv, 'Contractor', 10), el));
+      two.append(hubs, cp);
+      box.appendChild(two);
+    }
+
+    if (A.hub) {
+      const hv = rows.filter((r) => r['HUB'] === A.hub && (A.agent === 'all' || r['Agent'] === A.agent));
+      const det = el('div', 'afd-detail');
+      const dh = el('div', 'afd-dh');
+      const t = el('div'); t.append(el('h4', null, A.hub), el('span', null, [...new Set(hv.map((r) => r['Agent']))].map((x) => '👤 ' + x).join(' · ')));
+      const x = el('button', 'obd-x', 'إغلاق ✕'); x.type = 'button'; x.addEventListener('click', () => window.afSetHub(''));
+      dh.append(t, x); det.appendChild(dh);
+      const db = el('div', 'afd-db'); det.appendChild(db);
+      const l = lm.get(String(A.hub).trim().toLowerCase());
+      const tiles = el('div', 'afd-tiles');
+      const tile = (label, val, note, c) => { const d = el('div', 'afd-tile'); if (c) d.style.setProperty('--c', c); d.append(el('span', null, label), el('b', null, val)); if (note) d.appendChild(el('small', null, note)); return d; };
+      const rep2 = d3.rollups(hv, (v) => new Set(v.map((r) => r['Date'])).size, (r) => r['Star Id']).filter((e) => e[1] > 1).length;
+      tiles.append(
+        tile('عدد الغيابات', of2(hv.length), null, '#e30613'),
+        tile('مناديب غايبين', of2(new Set(hv.map((r) => r['Star Id'])).size), rep2 ? rep2 + ' منهم غياب متكرر' : null, '#1c1c1c'),
+        tile('مقاولين', of2(new Set(hv.map((r) => r['Contractor'])).size), null, '#7f7f7f'),
+      );
+      if (l) tiles.append(
+        tile('نسبة غياب الهب (LM)', typeof l['Absence %'] === 'number' ? Math.round(100 * l['Absence %']) + '%' : '—', l.Absence != null ? l.Absence + ' غايب من ' + l['Total Stars'] : null, '#9b0a12'),
+        tile('الشغالين / التارجت (LM)', (l.Active ?? '—') + ' / ' + (l.Target ?? '—'), null, '#1a9c4a'),
+      );
+      db.appendChild(tiles);
+      const mixes = el('div', 'afd-mixes');
+      const panel = (title, field) => { const p = el('div', 'afd-panel'); p.append(el('h5', null, title), afBars(afShares(hv, field, 8), el)); return p; };
+      mixes.append(panel('حسب المقاول', 'Contractor'), panel('حسب المركبة', 'Vehicle Type'), panel('Hub Feedback', 'Hub Feedback'));
+      db.appendChild(mixes);
+      const tw = el('div', 'af-tablebox'); tw.style.maxHeight = '22rem';
+      const tb = el('table', 'af-table'); tb.dataset.source = 'absences'; tb.dataset.rowKey = 'Date,Star Id';
+      const th = el('thead'), hr = el('tr');
+      [['Date', 'التاريخ'], ['Full Name', 'المندوب'], ['Fawry', 'الرقم'], ['Vehicle Type', 'المركبة'], ['Contractor', 'المقاول'], ['Hub Feedback', 'Hub Feedback'], [null, 'مرات الغياب']].forEach(([f2, lb]) => { const c = el('th', null, lb); if (f2) c.dataset.field = f2; hr.appendChild(c); });
+      th.appendChild(hr);
+      const times = d3.rollup(rows, (v) => new Set(v.map((r) => r['Date'])).size, (r) => r['Star Id']);
+      const body = el('tbody');
+      hv.slice().sort((a, b) => (times.get(b['Star Id']) || 0) - (times.get(a['Star Id']) || 0)).forEach((r) => {
+        const tr = el('tr'); tr.dataset.key = encodeURIComponent(r['Date']) + ',' + encodeURIComponent(r['Star Id']);
+        const intl = window.afPhone(r['Fawry']);
+        const n = times.get(r['Star Id']) || 1;
+        const tc = el('td'); tc.appendChild(el('span', 'af-times' + (n > 2 ? '' : n === 2 ? ' t2' : ''), String(n)));
+        tr.append(el('td', 'af-ltr', r['Date']), el('td', null, r['Full Name']), el('td', 'af-ltr', intl ? window.afLocal(intl) : r['Fawry']), el('td', null, r['Vehicle Type']), el('td', null, r['Contractor']), el('td', null, r['Hub Feedback']), tc);
+        body.appendChild(tr);
+      });
+      tb.append(th, body); tw.appendChild(tb); db.appendChild(tw);
+      box.appendChild(det);
+    }
+  });
+  dash.draw('af-repeat', (tbody) => {
+    const g = dash.data('af_repeat');
+    tbody.replaceChildren();
+    if (g.status !== 'ok') return;
+    const A = window.AF;
+    const rows = g.data.filter((r) => (A.agent === 'all' || r.Agent === A.agent) && (!A.hub || r.HUB === A.hub));
+    if (!rows.length) {
+      const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = 7; td.className = 'af-empty';
+      td.textContent = 'مفيش مندوب اتكرر غيابه في الأيام الموجودة في الشيت' + (A.agent !== 'all' ? ' عند ' + A.agent : '') + '.';
+      tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    const g2 = dash.data('absences');
+    for (const r of rows) {
+      const tr = document.createElement('tr'); tr.dataset.key = encodeURIComponent(r['Star Id']);
+      const td = (t, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; if (t != null) c.textContent = t; tr.appendChild(c); return c; };
+      td(r['Full Name']); td(r.HUB); td(r.Agent); td(r.Contractor);
+      td(null).appendChild(Object.assign(document.createElement('span'), { className: 'af-times' + (r.Times > 2 ? '' : ' t2'), textContent: String(r.Times) }));
+      td(r.Dates, 'af-dates');
+      const wc = td(null);
+      const last = g2.status === 'ok' ? [...g2.data].reverse().find((x) => x['Star Id'] === r['Star Id']) : null;
+      if (last && window.afPhone(last['Fawry'])) {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'af-sendbtn'; b.dataset.key = window.afKey(last); b.textContent = 'Send WhatsApp';
+        wc.appendChild(b);
+      }
+      tbody.appendChild(tr);
+    }
+  });
 
   dash.draw('agent-info', (el) => {
     const a = window.AF.agent;
@@ -1231,7 +1443,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       cb.dataset.key = window.afKey(r); cb.disabled = !ok; cb.checked = ok && window.AF.sel.has(window.afKey(r));
       cb.setAttribute('aria-label', 'اختيار ' + r['Full Name']);
       ctd.appendChild(cb); tr.appendChild(ctd);
-      add(r['Date']);
+      add(r['Date'], 'af-ltr');
       add(r['Full Name']);
       add(r['HUB']);
       const intl = window.afPhone(r['Fawry']);
@@ -1383,12 +1595,17 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
 <script>
   // Controls: agent tiles, search, dialog.
   const tiles = document.querySelectorAll('.af-tile');
-  tiles.forEach((t) => t.addEventListener('click', () => {
-    window.AF.agent = t.dataset.agent;
-    tiles.forEach((x) => { const on = x === t; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on ? 'true' : 'false'); });
-    dash.draw('rows'); dash.draw('empty-note'); dash.draw('agent-info');
+  const afRefresh = () => {
+    ['rows', 'empty-note', 'agent-info', 'af-drill', 'af-repeat'].forEach((n) => dash.draw(n));
     if (window.afSyncSel) window.afSyncSel();
-  }));
+  };
+  window.afSetAgent = (agent) => {
+    window.AF.agent = agent; window.AF.hub = '';
+    tiles.forEach((x) => { const on = x.dataset.agent === agent; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on ? 'true' : 'false'); });
+    afRefresh();
+  };
+  window.afSetHub = (hub) => { window.AF.hub = hub; afRefresh(); };
+  tiles.forEach((t) => t.addEventListener('click', () => window.afSetAgent(t.dataset.agent)));
 
   document.querySelectorAll('.af-search').forEach((inp) => inp.addEventListener('input', () => {
     window.AF.q = inp.value.trim();
