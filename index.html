@@ -2261,28 +2261,27 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   const MW_FF = 'system-ui,"Segoe UI",Arial,sans-serif';
   // "BY : Eslam Jupa" signature, centred just above the bottom red line.
   window.mwSign = (x, W, H, K) => {
-    const cy = H - 24 - 30, by = 'BY', nm = 'Eslam Jupa';
+    const cy = H - 24 - 21, by = 'BY', nm = 'Eslam Jupa';
     x.save();
     x.textBaseline = 'middle';
-    x.font = '800 12px ' + MW_FF; try { x.letterSpacing = '3px'; } catch (e) {}
+    x.font = '800 8.5px ' + MW_FF; try { x.letterSpacing = '2px'; } catch (e) {}
     const bw = x.measureText(by).width;
-    x.font = '800 19px ' + MW_FF; try { x.letterSpacing = '0.5px'; } catch (e) {}
+    x.font = '700 12.5px ' + MW_FF; try { x.letterSpacing = '0.3px'; } catch (e) {}
     const nw = x.measureText(nm).width;
-    const pad = 16, gap = 12, w = pad + 26 + gap + bw + gap + 1 + gap + nw + pad, h = 40, X = (W - w) / 2, Y = cy - h / 2;
-    x.beginPath(); x.roundRect(X, Y, w, h, 20); x.fillStyle = K.card; x.fill(); x.strokeStyle = '#E30613'; x.lineWidth = 1.5; x.stroke();
-    // monogram
-    x.beginPath(); x.arc(X + pad + 13, cy, 13, 0, 7); x.fillStyle = '#E30613'; x.fill();
-    x.font = '800 11px ' + MW_FF; try { x.letterSpacing = '0px'; } catch (e) {}
-    x.fillStyle = '#fff'; x.textAlign = 'center'; x.fillText('EJ', X + pad + 13, cy + 0.5);
-    let cx = X + pad + 26 + gap;
-    x.textAlign = 'left'; x.font = '800 12px ' + MW_FF; try { x.letterSpacing = '3px'; } catch (e) {}
+    const pad = 9, gap = 7, d = 16, w = pad + d + gap + bw + gap + 1 + gap + nw + pad, h = 26, X = (W - w) / 2, Y = cy - h / 2;
+    x.beginPath(); x.roundRect(X, Y, w, h, 13); x.fillStyle = K.card; x.fill(); x.strokeStyle = 'rgba(227,6,19,.7)'; x.lineWidth = 1; x.stroke();
+    x.beginPath(); x.arc(X + pad + d / 2, cy, d / 2, 0, 7); x.fillStyle = '#E30613'; x.fill();
+    x.font = '800 7.5px ' + MW_FF; try { x.letterSpacing = '0px'; } catch (e) {}
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.fillText('EJ', X + pad + d / 2, cy + 0.5);
+    let cx = X + pad + d + gap;
+    x.textAlign = 'left'; x.font = '800 8.5px ' + MW_FF; try { x.letterSpacing = '2px'; } catch (e) {}
     x.fillStyle = '#E30613'; x.fillText(by, cx, cy + 0.5); cx += bw + gap;
-    x.fillStyle = K.ln; x.fillRect(cx, cy - 10, 1, 20); cx += 1 + gap;
-    x.font = '800 19px ' + MW_FF; try { x.letterSpacing = '0.5px'; } catch (e) {}
-    x.fillStyle = K.ink; x.fillText(nm, cx, cy + 0.5);
+    x.fillStyle = K.ln; x.fillRect(cx, cy - 6, 1, 12); cx += 1 + gap;
+    x.font = '700 12.5px ' + MW_FF; try { x.letterSpacing = '0.3px'; } catch (e) {}
+    x.fillStyle = K.sub; x.fillText(nm, cx, cy + 0.5);
     x.restore();
   };
-  window.MW_SIGN_H = 58;
+  window.MW_SIGN_H = 40;
 
   // Generic image: header (logo, title, subtitle), one card per group with column table, signature, red line.
   window.mwImgDraw = (o) => {
