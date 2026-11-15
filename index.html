@@ -729,6 +729,29 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   .af-times { display: inline-block; min-width: 1.8rem; text-align: center; background: #e30613; color: #fff; border-radius: 999px; padding: 1px 8px; font-weight: 800; }
   .af-times.t2 { background: #d97706; }
   .af-dates { font-size: .75rem; color: var(--color-fg-muted); white-space: normal; direction: ltr; text-align: start; unicode-bidi: plaintext; }
+  /* shared WhatsApp image preview */
+  .mwp { direction: ltr; text-align: left; margin-top: var(--cds-gap-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 18px; padding: 18px 22px; font-size: 15px; }
+  .mwp-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .mwp-top b { font-size: 20px; }
+  .mwp-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mwp-btn { border: 0; background: #E30613; color: #fff; border-radius: 12px; padding: 11px 18px; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .mwp-btn.g { background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-border-line); }
+  .mwp-btn.s { padding: 8px 14px; font-size: 14px; }
+  .mwp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .mwp-opts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 6px 0 12px; }
+  .mwp-opts b { margin: 0 4px 0 10px; }
+  .mwp-opts b:first-child { margin-left: 0; }
+  .mwp-opts button { border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: 999px; padding: 7px 15px; font: inherit; font-size: 14px; cursor: pointer; }
+  .mwp-opts button.on { background: #E30613; border-color: #E30613; color: #fff; font-weight: 700; }
+  .mwp-note { font-size: 14px; color: var(--color-fg-muted); margin: 0 0 6px; }
+  .mwp img { max-width: 100%; display: block; margin: 10px auto; border-radius: 12px; border: 1px solid var(--color-border-line); }
+  .bf-pickbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; background: color-mix(in srgb, #25d366 10%, var(--color-bg)); border: 1px solid color-mix(in srgb, #25d366 45%, transparent); border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; }
+  .bf-pickbar:empty { display: none; }
+  .bf-imgbtn { font: inherit; font-size: var(--cds-font-size-caption); font-weight: 700; border: 0; border-radius: 8px; padding: 6px 12px; background: #25d366; color: #0b2e17; cursor: pointer; white-space: nowrap; }
+  .bf-pick { font: inherit; font-size: var(--cds-font-size-caption); font-weight: 700; border: 1px solid var(--color-border-line); border-radius: 8px; padding: 6px 12px; background: var(--color-bg); color: var(--color-fg); cursor: pointer; white-space: nowrap; }
+  .bf-pick.on { background: #25d366; border-color: #25d366; color: #0b2e17; }
+  .bf-hub.picked { box-shadow: inset 0 0 0 2px #25d366; }
+  .bf-sumacts { display: flex; gap: 8px; align-items: center; }
   /* logos */
   .mw-logo { height: 34px; width: auto; display: block; }
   .sec-logo { height: 30px; width: auto; display: block; margin-bottom: 10px; position: relative; z-index: 1; }
@@ -939,6 +962,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       <select class="sn-select bf-mgr" aria-label="مدير المنطقة" data-source="bf" data-draw="bf-mgr"></select>
       <input class="sn-search bf-search" type="search" placeholder="ابحث عن هب أو منطقة" aria-label="بحث">
       <span class="bf-tools">
+        <button class="bf-tool bf-imgmode" type="button" aria-pressed="false"><span class="bf-im-off">📸 اختار هبات لصورة واتساب</span><span class="bf-im-on" hidden>✓ إنهاء الاختيار</span></button>
         <button class="bf-tool bf-openall" type="button">فتح الكل</button>
         <button class="bf-tool bf-closeall" type="button">قفل الكل</button>
       </span>
@@ -951,6 +975,8 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       <span>الأسعار بالجنيه · ثابت = لكل يوم · متغير = لكل شحنة · "غير متاح" = النوع ده مش شغال في المنطقة</span>
     </div>
 
+    <div class="bf-pickbar" data-draw="bf-pickbar"></div>
+    <div data-draw="bf-pv"></div>
     <p class="sn-count" data-draw="bf-count">—</p>
     <div data-source="bf" data-draw="bf-hubs"></div>
   </section>
@@ -2185,7 +2211,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     const info = (h) => h.Z.map((z) => { const L = wrap(window.ND_AR[z.zone], 215), N = wrap(z.note, 215), bh = 18 + (L.length + N.length) * 15; return { L, N, h: Math.max(46, bh + 22) }; });
     const chh = (h) => CH + LBL + info(h).reduce((a, r) => a + r.h, 0) + 10, rows = [];
     for (let k = 0; k < list.length; k += cols) rows.push(list.slice(k, k + cols));
-    const H = y0 + rows.reduce((a, r) => a + Math.max(...r.map(chh)) + GAP, 0) + 30;
+    const H = y0 + rows.reduce((a, r) => a + Math.max(...r.map(chh)) + GAP, 0) + 30 + window.MW_SIGN_H;
     const c = document.createElement('canvas'); c.width = W * S2; c.height = H * S2; const x = c.getContext('2d'); x.scale(S2, S2);
     const T = (t, X, Y, fs, col, al, b) => { x.font = (b ? '700 ' : '400 ') + fs + 'px ' + FF; x.fillStyle = col; x.textAlign = al || 'left'; x.textBaseline = 'middle'; x.fillText(t, X, Y); };
     const RR = (X, Y, w, hh, r, col, bd) => { x.beginPath(); x.roundRect(X, Y, w, hh, r); x.fillStyle = col; x.fill(); if (bd) { x.strokeStyle = bd; x.lineWidth = 1.5; x.stroke(); } };
@@ -2225,9 +2251,161 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       });
       y += rh + GAP;
     });
+    window.mwSign(x, W, H, K);
     RR(P, H - 24, W - 2 * P, 6, 3, '#E30613');
     return c;
   }
+
+  // ===== Shared WhatsApp-image toolkit (same style as the Needs image) =====
+  window.ND_PAL = ND_PAL;
+  const MW_FF = 'system-ui,"Segoe UI",Arial,sans-serif';
+  // "BY : Eslam Jupa" signature, centred just above the bottom red line.
+  window.mwSign = (x, W, H, K) => {
+    const cy = H - 24 - 30, by = 'BY', nm = 'Eslam Jupa';
+    x.save();
+    x.textBaseline = 'middle';
+    x.font = '800 12px ' + MW_FF; try { x.letterSpacing = '3px'; } catch (e) {}
+    const bw = x.measureText(by).width;
+    x.font = '800 19px ' + MW_FF; try { x.letterSpacing = '0.5px'; } catch (e) {}
+    const nw = x.measureText(nm).width;
+    const pad = 16, gap = 12, w = pad + 26 + gap + bw + gap + 1 + gap + nw + pad, h = 40, X = (W - w) / 2, Y = cy - h / 2;
+    x.beginPath(); x.roundRect(X, Y, w, h, 20); x.fillStyle = K.card; x.fill(); x.strokeStyle = '#E30613'; x.lineWidth = 1.5; x.stroke();
+    // monogram
+    x.beginPath(); x.arc(X + pad + 13, cy, 13, 0, 7); x.fillStyle = '#E30613'; x.fill();
+    x.font = '800 11px ' + MW_FF; try { x.letterSpacing = '0px'; } catch (e) {}
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.fillText('EJ', X + pad + 13, cy + 0.5);
+    let cx = X + pad + 26 + gap;
+    x.textAlign = 'left'; x.font = '800 12px ' + MW_FF; try { x.letterSpacing = '3px'; } catch (e) {}
+    x.fillStyle = '#E30613'; x.fillText(by, cx, cy + 0.5); cx += bw + gap;
+    x.fillStyle = K.ln; x.fillRect(cx, cy - 10, 1, 20); cx += 1 + gap;
+    x.font = '800 19px ' + MW_FF; try { x.letterSpacing = '0.5px'; } catch (e) {}
+    x.fillStyle = K.ink; x.fillText(nm, cx, cy + 0.5);
+    x.restore();
+  };
+  window.MW_SIGN_H = 58;
+
+  // Generic image: header (logo, title, subtitle), one card per group with column table, signature, red line.
+  window.mwImgDraw = (o) => {
+    const K = ND_PAL[o.th], CW = o.cw || 704, P = 24, GP = 16, CH = 48, LBL = 36, GAP = 14, per = o.per, W = 2 * P + per * CW + (per - 1) * GP;
+    const logo = window.ndLogoImg && window.ndLogoImg.complete && window.ndLogoImg.naturalWidth ? window.ndLogoImg : null;
+    const LW = Math.min(320, W * 0.35), lh = logo ? (LW * logo.naturalHeight) / logo.naturalWidth : 0, y0 = 24 + lh + 92, S2 = per === 1 ? 2 : per === 2 ? 1.5 : 1;
+    const rh0 = (r) => (r.sub ? 50 : 40), chh = (cd) => CH + LBL + (cd.rows.length ? d3.sum(cd.rows, rh0) : 40) + 10;
+    const grid = []; for (let k = 0; k < o.cards.length; k += per) grid.push(o.cards.slice(k, k + per));
+    const H = y0 + grid.reduce((a, r) => a + Math.max(...r.map(chh)) + GAP, 0) + 30 + window.MW_SIGN_H;
+    const c = document.createElement('canvas'); c.width = W * S2; c.height = H * S2; const x = c.getContext('2d'); x.scale(S2, S2);
+    const T = (t, X, Y, fs, col, al, b, maxW) => { x.font = (b ? '700 ' : '400 ') + fs + 'px ' + MW_FF; x.fillStyle = col; x.textAlign = al || 'left'; x.textBaseline = 'middle'; let s2 = String(t ?? ''); if (maxW) while (s2.length > 1 && x.measureText(s2).width > maxW) s2 = s2.slice(0, -2) + '…'; x.fillText(s2, X, Y); };
+    const RR = (X, Y, w, hh, r, col, bd) => { x.beginPath(); x.roundRect(X, Y, w, hh, r); x.fillStyle = col; x.fill(); if (bd) { x.strokeStyle = bd; x.lineWidth = 1.5; x.stroke(); } };
+    const star = (cx, cy, r) => { x.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + (k * Math.PI) / 5, q = k % 2 ? r * 0.45 : r; x.lineTo(cx + q * Math.cos(a), cy + q * Math.sin(a)); } x.closePath(); x.fillStyle = K.st; x.fill(); };
+    const amt = (v, X, Y, fs, col) => { x.font = '700 10px ' + MW_FF; const ew = x.measureText('EGP').width; T('EGP', X, Y + 1, 10, K.mut, 'right', 1); T(d3.format(',')(v), X - ew - 4, Y, fs, col, 'right'); };
+    const vic = (cx, cy, t, col) => { x.save(); x.translate(cx - 10, cy - 10); x.scale(20 / 24, 20 / 24); x.fillStyle = col; x.strokeStyle = col; if (/sedan/i.test(t)) x.fill(new Path2D(VCAR)); else if (/van/i.test(t)) x.fill(new Path2D(VVAN)); else { x.lineWidth = 1.8; x.lineCap = 'round'; x.lineJoin = 'round'; x.beginPath(); x.arc(5, 17.5, 3.2, 0, 7); x.stroke(); x.beginPath(); x.arc(19, 17.5, 3.2, 0, 7); x.stroke(); x.stroke(new Path2D(VBK)); x.fill(new Path2D(VBD)); } x.restore(); };
+    const isAr = (t) => /[\u0600-\u06FF]/.test(String(t || ''));
+    x.fillStyle = K.bg; x.fillRect(0, 0, W, H);
+    if (logo) x.drawImage(logo, (W - LW) / 2, 24, LW, lh);
+    const sub = o.sub + (o.parts > 1 ? '  (' + o.part + '/' + o.parts + ')' : '');
+    T(o.title, W / 2, 24 + lh + 30, 26, K.ink, 'center', 1);
+    x.font = '400 16px ' + MW_FF; const sw = x.measureText(sub).width; T(sub, W / 2 - (o.star ? 10 : 0), 24 + lh + 62, 16, K.sub, 'center'); if (o.star) star(W / 2 + sw / 2, 24 + lh + 62, 8);
+    let y = y0;
+    grid.forEach((r) => {
+      const rh = Math.max(...r.map(chh));
+      r.forEach((cd, j) => {
+        const X = P + j * (CW + GP);
+        RR(X, y, CW, rh, 14, K.card, K.bd); x.fillStyle = '#E30613'; x.fillRect(X, y + CH - 3, 6, 3);
+        T(cd.name, X + 16, y + CH / 2, 19, K.ink, 'left', 1, CW * 0.42);
+        x.font = '700 17px ' + MW_FF; const cl = cd.count; const cw2 = x.measureText(cl).width;
+        T(cl, X + CW - (o.star ? 40 : 16), y + CH / 2, 17, K.st, 'right', 1); if (o.star) star(X + CW - 26, y + CH / 2, 9);
+        if (cd.pill) { x.font = '700 11px ' + MW_FF; const tw = Math.min(240, x.measureText(cd.pill.t).width + 20), tx = X + CW - (o.star ? 52 : 28) - cw2 - tw; RR(tx, y + CH / 2 - 11, tw, 22, 11, cd.pill.c || '#E30613'); T(cd.pill.t, tx + tw / 2, y + CH / 2 + 1, 11, '#fff', 'center', 1, tw - 12); }
+        const ly = y + CH + 10;
+        o.cols.forEach((col) => {
+          const al = col.al || 'left';
+          if (col.h2) { T(col.h1, X + col.x, ly - 2, 10, K.mut, al, 1); T(col.h2, X + col.x, ly + 11, 9, K.mut, al, 1); }
+          else T(col.h1, X + col.x, ly + 4, 10, K.mut, al, 1);
+        });
+        let ry = y + CH + LBL;
+        if (!cd.rows.length) T(cd.empty || '-', X + CW / 2, ry + 20, 14, K.mut, 'center');
+        cd.rows.forEach((row, k) => {
+          const h = rh0(row), cy = ry + h / 2;
+          if (k) { x.fillStyle = K.ln; x.fillRect(X + 14, ry, CW - 28, 1); }
+          o.cols.forEach((col) => {
+            const v = row[col.key], al = col.al || 'left', cx = X + col.x;
+            if (col.kind === 'money') { if (v == null || v === '' || Number(v) === 0) T('-', cx, cy, 15, K.mut, 'right'); else amt(Number(v), cx, cy, 15, col.color ? K[col.color] : K.ink); }
+            else if (col.kind === 'num') T('x' + v, cx, cy, 17, K.num, 'right', 1);
+            else if (col.kind === 'veh') { vic(cx + 10, cy, v, /moto/i.test(v) ? K.ib : K.ic); if (col.label) T(v, cx + 26, cy, 13, K.sub, 'left', 0, col.w); }
+            else if (col.kind === 'na') T(col.na || 'N/A', cx, cy, 12, K.mut, al);
+            else {
+              const main = row.sub && col.sub ? cy - 8 : cy;
+              if (isAr(v)) x.direction = 'rtl';
+              T(v, cx, main, col.fs || 15, col.color ? K[col.color] : K.ink, al, col.bold, col.w);
+              x.direction = 'ltr';
+              if (row.sub && col.sub) { if (isAr(row.sub)) x.direction = 'rtl'; T(row.sub, cx, cy + 11, 12, row.subColor ? K[row.subColor] : K.mut, al, 0, col.w); x.direction = 'ltr'; }
+            }
+          });
+          ry += h;
+        });
+      });
+      y += rh + GAP;
+    });
+    window.mwSign(x, W, H, K);
+    RR(P, H - 24, W - 2 * P, 6, 3, '#E30613');
+    return c;
+  };
+
+  // Split cards into images (and big cards into pieces) so each image stays readable.
+  window.mwParts = (cards, per) => {
+    const cap = per === 1 ? 26 : per * 18, pieces = [];
+    cards.forEach((cd) => {
+      if (cd.rows.length <= cap) { pieces.push(cd); return; }
+      const n = Math.ceil(cd.rows.length / cap);
+      for (let k = 0; k < n; k++) pieces.push({ ...cd, name: cd.name + ' (' + (k + 1) + '/' + n + ')', rows: cd.rows.slice(k * cap, (k + 1) * cap) });
+    });
+    const P2 = []; let cur = [], rows = 0;
+    pieces.forEach((cd) => { if (cur.length && (per === 1 ? rows + cd.rows.length > cap : cur.length >= per * 3)) { P2.push(cur); cur = []; rows = 0; } cur.push(cd); rows += cd.rows.length; });
+    if (cur.length) P2.push(cur);
+    return P2;
+  };
+
+  window.mwSave = async (o, base, redraw) => {
+    if (!o || !o.cs || !o.cs.length) return;
+    let dl = null; try { dl = await claude.use('downloads'); } catch (e) { dl = null; }
+    for (let k = 0; k < o.cs.length; k++) {
+      const b = await new Promise((r) => o.cs[k].toBlob(r, 'image/png')), fn = base + (o.cs.length > 1 ? '-' + (k + 1) : '') + '.png';
+      if (dl) { try { await dl.save({ filename: fn, data: b }); } catch (e) { if (e && e.code === 'declined') break; } }
+      else { o.note = 'Saving is not available here — press and hold (phone) or right-click (computer) on the image and choose Save image.'; redraw(); break; }
+    }
+  };
+  window.mwCopy = async (o, redraw) => {
+    if (!o || !o.cs || !o.cs.length) return;
+    try { const b = await new Promise((r) => o.cs[0].toBlob(r, 'image/png')); await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); o.note = '✓ Image copied' + (o.cs.length > 1 ? ' (part 1 of ' + o.cs.length + ')' : '') + ' — paste it in WhatsApp with Ctrl+V.'; }
+    catch (e) { o.note = 'The browser blocked copying — right-click the image and choose Copy image.'; }
+    redraw();
+  };
+
+  // Preview panel, same look as the Needs preview. cfg: { title, build(o) -> {title, sub, cards, cols, cw, star}, base, redraw, extra: [[label, key, [[v, text]...]]] }
+  window.mwPreview = (box, o, cfg) => {
+    box.replaceChildren();
+    if (!o) return;
+    const spec = cfg.build(o);
+    const parts = spec.cards.length ? window.mwParts(spec.cards, o.cols) : [];
+    o.cs = parts.map((p, k) => window.mwImgDraw({ ...spec, cards: p, per: Math.min(o.cols, Math.max(1, p.length)), th: o.th, part: k + 1, parts: parts.length }));
+    const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+    const card = el('div', 'mwp');
+    const top = el('div', 'mwp-top');
+    top.appendChild(el('b', null, cfg.title(spec)));
+    const acts = el('span', 'mwp-acts');
+    const btn = (t, cls, fn) => { const b = el('button', 'mwp-btn ' + cls, t); b.type = 'button'; b.disabled = !o.cs.length; b.addEventListener('click', fn); return b; };
+    acts.append(btn('Copy image', 'g', () => window.mwCopy(o, cfg.redraw)), btn('Save image' + (o.cs.length > 1 ? 's (' + o.cs.length + ')' : ''), '', () => window.mwSave(o, cfg.base(spec), cfg.redraw)));
+    const cl = el('button', 'mwp-btn g s', '✕'); cl.type = 'button'; cl.addEventListener('click', cfg.close); acts.appendChild(cl);
+    top.appendChild(acts); card.appendChild(top);
+    const opts = el('div', 'mwp-opts');
+    const grp = (label, key, items) => { opts.appendChild(el('b', null, label)); items.forEach(([v, l]) => { const b = el('button', o[key] === v ? 'on' : '', l); b.type = 'button'; b.addEventListener('click', () => { o[key] = v; o.note = ''; cfg.redraw(); }); opts.appendChild(b); }); };
+    (cfg.extra || []).forEach((e) => grp(...e));
+    grp('Layout', 'cols', [[1, '1 per row (tall)'], [2, '2 per row'], [3, '3 per row (wide)']]);
+    grp('Color', 'th', [['dark', 'Black'], ['light', 'Light']]);
+    card.appendChild(opts);
+    card.appendChild(el('p', 'mwp-note', o.note || (o.cs.length ? 'Press and hold (phone) or right-click (computer) on the image to save it if the button does not work.' : 'Nothing to show for this choice.')));
+    o.cs.forEach((cv, k) => { const im = el('img'); im.alt = 'Bosta image ' + (k + 1); im.src = cv.toDataURL('image/png'); card.appendChild(im); });
+    box.appendChild(card);
+  };
+
   function ndParts(list, cols) { const cap = cols === 1 ? 22 : cols * 4, P = []; let cur = [], rows = 0; list.forEach((h) => { const r = h.Z.length; if (cur.length && (cols === 1 ? rows + r > cap : cur.length >= cap)) { P.push(cur); cur = []; rows = 0; } cur.push(h); rows += r; }); if (cur.length) P.push(cur); return P; }
   window.ndOpenImg = (names) => {
     const hubs = window.ndHubs(); if (!hubs) return;
@@ -2375,7 +2553,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     }],
   });
 
-  window.BF = { area: '', mgr: '', q: '', open: new Set(), all: false };
+  window.BF = { area: '', mgr: '', q: '', open: new Set(), all: false, mode: false, pick: new Set(), io: null };
   const ff = d3.format(',');
   const kpi = (field) => (el) => {
     const g = dash.data('bf_summary');
@@ -2422,6 +2600,65 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       && (!window.BF.mgr || r['Area Manger'] === window.BF.mgr)
       && (!q || (r['HUB'] + ' ' + r['Zone'] + ' ' + r['Area'] + ' ' + r['Area Manger']).toLowerCase().includes(q)));
   };
+
+
+  // ----- BF Schema WhatsApp image (same style as the Needs image)
+  window.bfOpenImg = (hubs) => {
+    if (!hubs.length) return;
+    window.BF.io = { list: hubs, cols: hubs.length >= 2 ? 2 : 1, th: 'dark', note: '' };
+    dash.draw('bf-pv');
+    requestAnimationFrame(() => document.querySelectorAll('[data-draw="bf-pv"]').forEach((p) => p.scrollIntoView({ behavior: 'smooth', block: 'start' })));
+  };
+  const bfBuild = (o) => {
+    const g = dash.data('bf'); const data = g.status === 'ok' ? g.data : [];
+    const cards = o.list.map((hub) => {
+      const key = hubKey(hub);
+      const v = data.filter((r) => hubKey(r['HUB']) === key).sort((a, b) => (b['Sedan Fixed'] || 0) - (a['Sedan Fixed'] || 0));
+      const area = [...new Set(v.map((r) => r['Area']).filter(Boolean))].join(', ');
+      return {
+        name: hub, count: v.length + ' zones', pill: area ? { t: area, c: '#E30613' } : null, mgr: [...new Set(v.map((r) => r['Area Manger']).filter(Boolean))],
+        rows: v.map((r) => ({ zone: r['Zone'], sf: r['Sedan Fixed'], sv: r['Sedan Variable'], vf: r['Van Fixed'], vv: r['Van Variable'], mf: r['Motorbike Fixed'], mv: r['Motorbike Variable'] })),
+      };
+    }).filter((c) => c.rows.length);
+    const mg = [...new Set(cards.flatMap((c) => c.mgr))];
+    return {
+      title: 'BOSTA PRICING 2026', star: false, cw: 880,
+      sub: (cards.length === 1 ? cards[0].name : cards.length + ' hubs') + (mg.length === 1 ? '  -  Area manager: ' + mg[0] : '') + '  -  ' + d3.sum(cards, (c) => c.rows.length) + ' zones',
+      cards,
+      cols: [
+        { key: 'zone', h1: 'ZONE', x: 16, w: 250 },
+        { key: 'sf', h1: 'SEDAN', h2: 'FIXED / DAY', x: 380, al: 'right', kind: 'money' },
+        { key: 'sv', h1: 'SEDAN', h2: 'PER PARCEL', x: 470, al: 'right', kind: 'money', color: 'num' },
+        { key: 'vf', h1: 'VAN', h2: 'FIXED / DAY', x: 590, al: 'right', kind: 'money' },
+        { key: 'vv', h1: 'VAN', h2: 'PER PARCEL', x: 680, al: 'right', kind: 'money', color: 'num' },
+        { key: 'mf', h1: 'MOTORBIKE', h2: 'FIXED / DAY', x: 784, al: 'right', kind: 'money', color: 'bo' },
+        { key: 'mv', h1: 'MOTORBIKE', h2: 'PER PARCEL', x: 864, al: 'right', kind: 'money', color: 'num' },
+      ],
+    };
+  };
+  dash.draw('bf-pv', (box) => {
+    window.mwPreview(box, window.BF.io, {
+      build: bfBuild,
+      title: (sp) => 'WhatsApp image - ' + sp.cards.length + ' hub' + (sp.cards.length === 1 ? '' : 's'),
+      base: (sp) => 'Bosta-pricing-' + (sp.cards.length === 1 ? sp.cards[0].name.replace(/ Hub$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-') : sp.cards.length + '-hubs'),
+      redraw: () => dash.draw('bf-pv'),
+      close: () => { window.BF.io = null; dash.draw('bf-pv'); },
+    });
+  });
+  dash.draw('bf-pickbar', (box) => {
+    box.replaceChildren();
+    if (!window.BF.mode) return;
+    const P = window.BF.pick;
+    const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+    box.appendChild(el('span', null, P.size ? P.size + ' هب مختار: ' + [...P].join('، ') : 'دوس "☐ اختار" جنب الهبات اللي عايزها في الصورة'));
+    const acts = el('span', 'bf-sumacts');
+    const b1 = el('button', 'bf-pick', 'كل الهبات المعروضة'); b1.type = 'button';
+    b1.addEventListener('click', () => { (window.bfRows() || []).forEach((r) => P.add(r['HUB'].trim())); dash.draw('bf-pickbar'); window.bfRedraw(); });
+    const b2 = el('button', 'bf-pick', 'مسح'); b2.type = 'button'; b2.addEventListener('click', () => { P.clear(); dash.draw('bf-pickbar'); window.bfRedraw(); });
+    const b3 = el('button', 'bf-imgbtn', '📸 Create WhatsApp image'); b3.type = 'button'; b3.disabled = !P.size;
+    b3.addEventListener('click', () => window.bfOpenImg([...P]));
+    acts.append(b1, b2, b3); box.appendChild(acts);
+  });
 
   dash.draw('bf-count', (el) => {
     const rows = window.bfRows();
@@ -2472,7 +2709,21 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
           if (rg) meta.appendChild(el('span', 'bf-pill ' + c, label.split(' ')[0] + ' ثابت ' + rg + ' ج'));
         }
         left.appendChild(meta);
-        sm.append(left, el('span', 'bf-chev', '⌄'));
+        const sa = el('span', 'bf-sumacts');
+        const stop = (ev) => { ev.preventDefault(); ev.stopPropagation(); };
+        if (window.BF.mode) {
+          const on = window.BF.pick.has(hubName);
+          if (on) d.classList.add('picked');
+          const pb = el('button', 'bf-pick' + (on ? ' on' : ''), on ? '☑ مختار' : '☐ اختار'); pb.type = 'button';
+          pb.addEventListener('click', (ev) => { stop(ev); window.BF.pick.has(hubName) ? window.BF.pick.delete(hubName) : window.BF.pick.add(hubName); dash.draw('bf-pickbar'); window.bfRedraw(); });
+          sa.appendChild(pb);
+        } else {
+          const ib = el('button', 'bf-imgbtn', '📸 Create WhatsApp image'); ib.type = 'button';
+          ib.addEventListener('click', (ev) => { stop(ev); window.bfOpenImg([hubName]); });
+          sa.appendChild(ib);
+        }
+        sa.appendChild(el('span', 'bf-chev', '⌄'));
+        sm.append(left, sa);
         d.appendChild(sm);
 
         const tw = el('div', 'bf-tw');
@@ -2519,6 +2770,12 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   window.bfRedraw = () => { dash.draw('bf-hubs'); dash.draw('bf-count'); };
   document.querySelectorAll('.bf-search').forEach((i) => i.addEventListener('input', () => { window.BF.q = i.value.trim(); window.bfRedraw(); }));
   document.querySelectorAll('.bf-mgr').forEach((m) => m.addEventListener('change', () => { window.BF.mgr = m.value; window.bfRedraw(); }));
+  document.querySelectorAll('.bf-imgmode').forEach((b) => b.addEventListener('click', () => {
+    const on = !window.BF.mode; window.BF.mode = on; if (!on) window.BF.pick.clear();
+    b.querySelectorAll('.bf-im-off').forEach((x) => { x.hidden = on; }); b.querySelectorAll('.bf-im-on').forEach((x) => { x.hidden = !on; });
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    dash.draw('bf-pickbar'); window.bfRedraw();
+  }));
   document.querySelectorAll('.bf-openall').forEach((b) => b.addEventListener('click', () => { window.BF.all = true; window.bfRedraw(); }));
   document.querySelectorAll('.bf-closeall').forEach((b) => b.addEventListener('click', () => { window.BF.all = false; window.BF.open.clear(); window.bfRedraw(); }));
   if (location.hash === '#bf-schema') document.querySelectorAll('.mw-navbtn[data-sec="bf-schema"]').forEach((b) => b.click());
@@ -2806,123 +3063,50 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     }
   });
 
-  // ----- On boarding WhatsApp image (canvas, black background by default)
-  const OBI_PAL = {
-    dark: { bg: '#000000', card: '#161616', bd: '#262626', ink: '#FFFFFF', sub: '#D0D0D0', mut: '#9A9A9A', ln: '#2A2A2A', acc: '#FF5A66', st: '#FFC400', zeb: '#1C1C1C' },
-    light: { bg: '#F3F7FB', card: '#FFFFFF', bd: '#D8E1EA', ink: '#112A46', sub: '#4A5B70', mut: '#6B7C93', ln: '#E1E8F0', acc: '#E30613', st: '#E9A700', zeb: '#F6F9FC' },
-  };
-  const OBI_VC = { Sedan: '#E30613', Van: '#5B7BA6', 'Bosta Van': '#9B0A12', Motorbike: '#E9A700', Tricycle: '#F08A24' };
-  const obiRows = (o) => {
-    const g = dash.data('onboarding'); if (g.status !== 'ok') return [];
-    const max = g.data.reduce((m, r) => (r['Joined At'] > m ? r['Joined At'] : m), '');
-    const from = o.range === '7d' ? obAddDays(max, -6) : o.range === 'month' ? max.slice(0, 7) + '-01' : '';
-    return o.list.map((hub) => {
-      const v = g.data.filter((r) => r.Hub === hub && (!from || r['Joined At'] >= from)).sort((a, b) => (a.Vehicle || '').localeCompare(b.Vehicle || '') || (a['Joined At'] < b['Joined At'] ? 1 : -1));
-      return { hub, rows: v, seniors: [...new Set(v.map((r) => r.senior).filter(Boolean))] };
-    }).filter((h) => h.rows.length);
-  };
-  function obiDraw(list, cols, th, part, parts, rangeLabel) {
-    const K = OBI_PAL[th], CW = 780, P = 24, GP = 16, CH = 54, VH = 40, LBL = 30, RH = 34, GAP = 14, W = 2 * P + cols * CW + (cols - 1) * GP;
-    const logo = window.ndLogoImg && window.ndLogoImg.complete && window.ndLogoImg.naturalWidth ? window.ndLogoImg : null;
-    const LW = Math.min(300, W * 0.35), lh = logo ? (LW * logo.naturalHeight) / logo.naturalWidth : 0, y0 = 24 + lh + 96, S2 = cols === 1 ? 2 : 1.5;
-    const FF = 'system-ui,"Segoe UI",Arial,sans-serif';
-    const chh = (h) => CH + VH + LBL + h.rows.length * RH + 12, rowsOf = [];
-    for (let k = 0; k < list.length; k += cols) rowsOf.push(list.slice(k, k + cols));
-    const H = y0 + rowsOf.reduce((a, r) => a + Math.max(...r.map(chh)) + GAP, 0) + 30;
-    const c = document.createElement('canvas'); c.width = W * S2; c.height = H * S2; const x = c.getContext('2d'); x.scale(S2, S2);
-    const T = (t, X, Y, fs, col, al, b, maxW) => { x.font = (b ? '700 ' : '400 ') + fs + 'px ' + FF; x.fillStyle = col; x.textAlign = al || 'left'; x.textBaseline = 'middle'; let s2 = String(t ?? ''); if (maxW) { while (s2.length > 1 && x.measureText(s2).width > maxW) s2 = s2.slice(0, -2) + '…'; } x.fillText(s2, X, Y); };
-    const RR = (X, Y, w, hh, r, col, bd) => { x.beginPath(); x.roundRect(X, Y, w, hh, r); x.fillStyle = col; x.fill(); if (bd) { x.strokeStyle = bd; x.lineWidth = 1.5; x.stroke(); } };
-    const star = (cx, cy, r) => { x.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + (k * Math.PI) / 5, q = k % 2 ? r * 0.45 : r; x.lineTo(cx + q * Math.cos(a), cy + q * Math.sin(a)); } x.closePath(); x.fillStyle = K.st; x.fill(); };
-    x.fillStyle = K.bg; x.fillRect(0, 0, W, H);
-    if (logo) x.drawImage(logo, (W - LW) / 2, 24, LW, lh);
-    const total = list.reduce((a, h) => a + h.rows.length, 0), sens = [...new Set(list.flatMap((h) => h.seniors))];
-    const sub = (list.length === 1 ? list[0].hub : list.length + ' hubs') + (sens.length === 1 ? '  -  Senior: ' + sens[0] : '') + '  -  ' + total + ' new Star' + (rangeLabel ? '  -  ' + rangeLabel : '') + (parts > 1 ? '  (' + part + '/' + parts + ')' : '');
-    T('BOSTA ON BOARDING', W / 2, 24 + lh + 32, 26, K.ink, 'center', 1);
-    x.font = '400 16px ' + FF; const sw = x.measureText(sub).width; T(sub, W / 2 - 10, 24 + lh + 64, 16, K.sub, 'center'); star(W / 2 + sw / 2 + 2, 24 + lh + 64, 8);
-    const cs = { n: 18, nm: 50, v: 330, z: 440, c: 620, d: CW - 16 };
-    let y = y0;
-    rowsOf.forEach((r) => {
-      const rh = Math.max(...r.map(chh));
-      r.forEach((h, j) => {
-        const X = P + j * (CW + GP);
-        RR(X, y, CW, rh, 14, K.card, K.bd); x.fillStyle = '#E30613'; x.fillRect(X, y + 18, 5, CH - 36);
-        T(h.hub, X + 18, y + CH / 2, 20, K.ink, 'left', 1, 420);
-        T(h.rows.length + ' Star', X + CW - 40, y + CH / 2, 18, K.st, 'right', 1); star(X + CW - 26, y + CH / 2, 9);
-        if (h.seniors.length) { const st = 'Senior: ' + h.seniors.join(', '); x.font = '700 12px ' + FF; const tw = Math.min(260, x.measureText(st).width + 22), tx = X + CW - 130 - tw; RR(tx, y + CH / 2 - 12, tw, 24, 12, '#E30613'); T(st, tx + tw / 2, y + CH / 2 + 1, 12, '#fff', 'center', 1, tw - 14); }
-        // vehicle chips
-        const mix = [...d3.rollup(h.rows, (v) => v.length, (q) => q.Vehicle || '—')].sort((a, b) => b[1] - a[1]);
-        let cx = X + 18; const cy = y + CH + VH / 2 - 4;
-        mix.forEach(([v, n]) => { const lab = v + '  ' + n; x.font = '700 13px ' + FF; const w = x.measureText(lab).width + 30; RR(cx, cy - 13, w, 26, 13, K.zeb, K.ln); x.beginPath(); x.arc(cx + 13, cy, 5, 0, 7); x.fillStyle = OBI_VC[v] || '#888'; x.fill(); T(lab, cx + 23, cy + 1, 13, K.ink, 'left', 1); cx += w + 8; });
-        const ly = y + CH + VH + LBL / 2 - 2;
-        [['#', 'n', 'left'], ['NAME', 'nm', 'left'], ['VEHICLE', 'v', 'left'], ['ZONE', 'z', 'left'], ['CONTRACTOR', 'c', 'left'], ['JOINED', 'd', 'right']].forEach(([t2, k, al]) => T(t2, X + cs[k], ly, 10.5, K.mut, al, 1));
-        let ry = y + CH + VH + LBL;
-        h.rows.forEach((q, i) => {
-          if (i % 2 === 0) { x.fillStyle = K.zeb; x.fillRect(X + 10, ry, CW - 20, RH); }
-          const cy2 = ry + RH / 2;
-          T(String(i + 1), X + cs.n, cy2, 12, K.mut, 'left');
-          T(q['Full Name'], X + cs.nm, cy2, 14, K.ink, 'left', 1, cs.v - cs.nm - 10);
-          x.beginPath(); x.arc(X + cs.v + 5, cy2, 4.5, 0, 7); x.fillStyle = OBI_VC[q.Vehicle] || '#888'; x.fill();
-          T(q.Vehicle, X + cs.v + 15, cy2, 13, K.sub, 'left', 0, cs.z - cs.v - 20);
-          T(q.zone, X + cs.z, cy2, 13, K.sub, 'left', 0, cs.c - cs.z - 10);
-          T(q.contractor, X + cs.c, cy2, 13, K.sub, 'left', 0, 95);
-          T(q['Joined At'].slice(8, 10) + '/' + q['Joined At'].slice(5, 7), X + cs.d, cy2, 13, K.acc, 'right', 1);
-          ry += RH;
-        });
-      });
-      y += rh + GAP;
-    });
-    RR(P, H - 24, W - 2 * P, 6, 3, '#E30613');
-    return c;
-  }
-  const obiParts = (list, cols) => { const cap = cols === 1 ? 45 : cols * 30, P2 = []; let cur = [], n = 0; list.forEach((h) => { const r = h.rows.length; if (cur.length && n + r > cap) { P2.push(cur); cur = []; n = 0; } cur.push(h); n += r; }); if (cur.length) P2.push(cur); return P2; };
+  // ----- On boarding WhatsApp image (same style as the Needs image)
   window.obOpenImg = (hubs) => {
     if (!hubs.length) return;
     window.OB.io = { list: hubs, cols: hubs.length >= 2 ? 2 : 1, th: 'dark', range: 'all', note: '' };
     dash.draw('ob-pv');
     requestAnimationFrame(() => document.querySelectorAll('.obi-pv').forEach((p) => p.scrollIntoView({ behavior: 'smooth', block: 'start' })));
   };
+  const obiBuild = (o) => {
+    const g = dash.data('onboarding'); const data = g.status === 'ok' ? g.data : [];
+    const max = data.reduce((m, r) => (r['Joined At'] > m ? r['Joined At'] : m), '');
+    const from = o.range === '7d' ? obAddDays(max, -6) : o.range === 'month' ? max.slice(0, 7) + '-01' : '';
+    const cards = o.list.map((hub) => {
+      const v = data.filter((r) => r.Hub === hub && (!from || r['Joined At'] >= from))
+        .sort((a, b) => String(a.Vehicle).localeCompare(String(b.Vehicle)) || (a['Joined At'] < b['Joined At'] ? 1 : -1));
+      const sens = [...new Set(v.map((r) => r.senior).filter(Boolean))];
+      return {
+        name: hub, count: v.length + ' Star', pill: sens.length ? { t: 'Senior: ' + sens.join(', '), c: '#E30613' } : null, sens,
+        rows: v.map((r) => ({ name: r['Full Name'], sub: r.zone, veh: r.Vehicle, contractor: r.contractor, joined: r['Joined At'].slice(8, 10) + '/' + r['Joined At'].slice(5, 7) })),
+      };
+    }).filter((c) => c.rows.length);
+    const tot = d3.sum(cards, (c) => c.rows.length), sens = [...new Set(cards.flatMap((c) => c.sens))];
+    const rl = { all: '', month: '  -  This month', '7d': '  -  Last 7 days' }[o.range];
+    return {
+      title: 'BOSTA ON BOARDING', star: true, cw: 704,
+      sub: (cards.length === 1 ? cards[0].name : cards.length + ' hubs') + (sens.length === 1 ? '  -  Senior: ' + sens[0] : '') + rl + '  -  ' + tot + ' Star',
+      cards,
+      cols: [
+        { key: 'name', h1: 'NAME', x: 16, w: 300, sub: true },
+        { key: 'veh', h1: 'VEHICLE', x: 330, kind: 'veh', label: true, w: 90 },
+        { key: 'contractor', h1: 'CONTRACTOR', x: 470, w: 140, color: 'sub', fs: 14 },
+        { key: 'joined', h1: 'JOINED', x: 688, al: 'right', color: 'num', bold: true },
+      ],
+    };
+  };
   dash.draw('ob-pv', (box) => {
-    box.replaceChildren();
-    const o = window.OB.io; if (!o) return;
-    const list = obiRows(o);
-    const rl = { all: '', month: 'This month', '7d': 'Last 7 days' }[o.range];
-    const parts = list.length ? obiParts(list, o.cols) : [];
-    o.cs = parts.map((p, k) => obiDraw(p, o.cols, o.th, k + 1, parts.length, rl));
-    const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
-    const card = el('div', 'obi-card');
-    const top = el('div', 'obi-top');
-    top.appendChild(el('b', null, '📸 صورة واتساب — ' + o.list.length + ' هب · ' + d3.sum(list, (h) => h.rows.length) + ' مندوب'));
-    const acts = el('span'); acts.style.display = 'flex'; acts.style.gap = '6px'; acts.style.flexWrap = 'wrap';
-    const btn = (t, cls, fn) => { const b = el('button', 'obd-btn ' + cls, t); b.type = 'button'; b.disabled = !o.cs.length; b.addEventListener('click', fn); return b; };
-    acts.append(btn('نسخ الصورة', 'g', () => window.obCopy()), btn('💾 Save image' + (o.cs.length > 1 ? 's (' + o.cs.length + ')' : ''), 'r', () => window.obSave()));
-    const cl = el('button', 'obd-btn g', '✕'); cl.type = 'button'; cl.addEventListener('click', () => { window.OB.io = null; dash.draw('ob-pv'); }); acts.appendChild(cl);
-    top.appendChild(acts); card.appendChild(top);
-    const opts = el('div', 'obi-opts');
-    const grp = (label, key, items) => { opts.appendChild(el('b', null, label)); items.forEach(([v, l]) => { const b = el('button', o[key] === v ? 'on' : '', l); b.type = 'button'; b.addEventListener('click', () => { o[key] = v; o.note = ''; dash.draw('ob-pv'); }); opts.appendChild(b); }); };
-    grp('المناديب:', 'range', [['all', 'الكل'], ['month', 'الشهر ده'], ['7d', 'آخر 7 أيام']]);
-    grp('الترتيب:', 'cols', [[1, 'هب في كل صف'], [2, 'هبين في الصف']]);
-    grp('اللون:', 'th', [['dark', 'أسود'], ['light', 'فاتح']]);
-    card.appendChild(opts);
-    card.appendChild(el('p', 'obd-sub', o.note || (list.length ? 'لو زرار الحفظ مشتغلش: اضغط مطولاً على الصورة (موبايل) أو كليك يمين (كمبيوتر) → حفظ الصورة.' : 'مفيش مناديب في الفترة دي للهبات المختارة.')));
-    o.cs.forEach((cv, k) => { const im = el('img'); im.alt = 'Bosta on boarding ' + (k + 1); im.src = cv.toDataURL('image/png'); card.appendChild(im); });
-    box.appendChild(card);
+    window.mwPreview(box, window.OB.io, {
+      build: obiBuild,
+      title: (sp) => 'WhatsApp image - ' + sp.cards.length + ' hub' + (sp.cards.length === 1 ? '' : 's') + ' - ' + d3.sum(sp.cards, (c) => c.rows.length) + ' Star',
+      base: (sp) => 'Bosta-onboarding-' + (sp.cards.length === 1 ? sp.cards[0].name.replace(/ Hub$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-') : sp.cards.length + '-hubs'),
+      redraw: () => dash.draw('ob-pv'),
+      close: () => { window.OB.io = null; dash.draw('ob-pv'); },
+      extra: [['Stars', 'range', [['all', 'All'], ['month', 'This month'], ['7d', 'Last 7 days']]]],
+    });
   });
-  window.obSave = async () => {
-    const o = window.OB.io; if (!o || !o.cs || !o.cs.length) return;
-    let dl = null; try { dl = await claude.use('downloads'); } catch (e) { dl = null; }
-    const base = 'Bosta-onboarding-' + (o.list.length === 1 ? o.list[0].replace(/ Hub$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-') : o.list.length + '-hubs');
-    for (let k = 0; k < o.cs.length; k++) {
-      const b = await new Promise((r) => o.cs[k].toBlob(r, 'image/png')), fn = base + (o.cs.length > 1 ? '-' + (k + 1) : '') + '.png';
-      if (dl) { try { await dl.save({ filename: fn, data: b }); } catch (e) { if (e && e.code === 'declined') break; } }
-      else { o.note = 'الحفظ المباشر مش متاح هنا — اضغط مطولاً على الصورة (موبايل) أو كليك يمين (كمبيوتر) واختار حفظ الصورة.'; dash.draw('ob-pv'); break; }
-    }
-  };
-  window.obCopy = async () => {
-    const o = window.OB.io; if (!o || !o.cs || !o.cs.length) return;
-    try { const b = await new Promise((r) => o.cs[0].toBlob(r, 'image/png')); await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); o.note = '✓ اتنسخت الصورة' + (o.cs.length > 1 ? ' (الجزء 1 من ' + o.cs.length + ')' : '') + ' — الصقها في واتساب بـ Ctrl+V.'; }
-    catch (e) { o.note = 'المتصفح منع النسخ — كليك يمين على الصورة واختار نسخ الصورة.'; }
-    dash.draw('ob-pv');
-  };
 
   dash.draw('ob-count', (el) => {
     const rows = window.obFiltered();
