@@ -2259,9 +2259,9 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   // ===== Shared WhatsApp-image toolkit (same style as the Needs image) =====
   window.ND_PAL = ND_PAL;
   const MW_FF = 'system-ui,"Segoe UI",Arial,sans-serif';
-  // "BY : Eslam Jupa" signature, centred just above the bottom red line.
+  // "BY : Islam Frouk" signature, centred just above the bottom red line.
   window.mwSign = (x, W, H, K) => {
-    const cy = H - 24 - 21, by = 'BY', nm = 'Eslam Jupa';
+    const cy = H - 24 - 21, by = 'BY', nm = 'Islam Frouk';
     x.save();
     x.textBaseline = 'middle';
     x.font = '800 8.5px ' + MW_FF; try { x.letterSpacing = '2px'; } catch (e) {}
@@ -2272,7 +2272,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     x.beginPath(); x.roundRect(X, Y, w, h, 13); x.fillStyle = K.card; x.fill(); x.strokeStyle = 'rgba(227,6,19,.7)'; x.lineWidth = 1; x.stroke();
     x.beginPath(); x.arc(X + pad + d / 2, cy, d / 2, 0, 7); x.fillStyle = '#E30613'; x.fill();
     x.font = '800 7.5px ' + MW_FF; try { x.letterSpacing = '0px'; } catch (e) {}
-    x.fillStyle = '#fff'; x.textAlign = 'center'; x.fillText('EJ', X + pad + d / 2, cy + 0.5);
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.fillText('IF', X + pad + d / 2, cy + 0.5);
     let cx = X + pad + d + gap;
     x.textAlign = 'left'; x.font = '800 8.5px ' + MW_FF; try { x.letterSpacing = '2px'; } catch (e) {}
     x.fillStyle = '#E30613'; x.fillText(by, cx, cy + 0.5); cx += bw + gap;
