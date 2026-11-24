@@ -43,7 +43,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     absences:   { id: '1Z5g6D4pq2g8Upa3qkEzG09b4gtvZwereLoWDKOJyEiw', gid: '0', range: 'A1:O2000', name: 'Absence fleet' },
     bf:         { id: '1hj7BCPx1MEGNDCb6dgv0Dwsoacdq2RvDRDhgu7Gmj_Y', gid: '0', range: 'A1:J1318', name: 'LM Scheme 2026' },
     onboarding: { id: '1SPyq6wN2sMAV7OMLaud4FFSTO65RcE8DzAh1yz9y-U0', gid: '0', range: 'A1:I3000', name: 'Onboarding' },
-    needs:      { id: '1zORzf7IlgrLnFpysUU-SaYymXey7xaWhXgnOql0kem4', gid: '0', range: 'A1:K1000', name: 'Needs Nov' },
+    needs:      { id: '1zORzf7IlgrLnFpysUU-SaYymXey7xaWhXgnOql0kem4', gid: '0', range: 'A1:Z1000', name: 'Needs Nov' },
     replies:    { id: '1a7ERPXTCld5gYfqm1AJRuh-Z6OGG1H6bsOLIAe2wdcA', gid: '0', range: 'A1:B1008', name: 'My Replies' },
     lm_hubs:    { id: '1MVXkZqiCHRbVr3ii2raFeMyIs7qMdh38hIEnEptBw2Q', gid: '0', range: 'A3:J200', name: 'LM Report › Email' },
     lm_target:  { id: '1MVXkZqiCHRbVr3ii2raFeMyIs7qMdh38hIEnEptBw2Q', gid: '2054329817', range: 'A2:H200', name: 'LM Report › Target' },
@@ -938,7 +938,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       <div data-draw="nd-bar"></div>
       <div data-source="needs" data-draw="nd-main"></div>
       <div class="nd-pv" data-draw="nd-pv"></div>
-      <p class="nd-foot">Star = what each zone still needs after the new stars of this month in the On boarding sheet (same hub and vehicle) are taken off. Live from the Needs Nov sheet.</p>
+      <p class="nd-foot">Star = what each zone still needs after new stars in the On boarding sheet (same hub and vehicle) who joined on or after the request's Update Date are taken off. Without an Update Date column, the count starts at the beginning of the month. Live from the Needs Nov sheet.</p>
     </div>
 
     <div class="af-card sn-perfcard" style="margin-bottom: var(--cds-gap-md)">
@@ -960,7 +960,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
         <table class="af-table sn-ft" data-source="sn_fill" data-row-key="Hub,Type">
           <thead><tr>
             <th data-field="Hub">Hub</th><th data-field="Type">النوع</th><th data-field="Needed">مطلوب</th>
-            <th data-field="Filled">اتعين</th><th data-field="Remaining">متبقي</th><th>التقدم</th><th data-field="Extra">زيادة</th>
+            <th data-field="Filled">اتعين</th><th data-field="Remaining">متبقي</th><th>التقدم</th><th data-field="Extra">زيادة</th><th data-field="Since">من تاريخ</th>
           </tr></thead>
           <tbody data-draw="sn-fill-rows"></tbody>
         </table>
@@ -1855,7 +1855,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
 
   // ---------- Star Need ----------
   dash.loader('needs', {
-    description: 'Needs Nov sheet as rows: first row names the columns; rows without a hub skipped; Count and money columns read as numbers (commas removed, blank = empty); ID is the sheet row number.',
+    description: 'Needs Nov sheet as rows: first row names the columns; rows without a hub skipped; Count and money columns read as numbers (commas removed, blank = empty); an Update Date column (any of 16/11/2026, 11/16/2026, 16-Nov-2026, 16 Nov 2026, 2026-11-16) rewritten as YYYY-MM-DD; ID is the sheet row number.',
     fn: ({ answer }) => {
       const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
       if (!a || !Array.isArray(a.values)) throw new Error('Google Sheets returned no values' + (a && a.error ? ': ' + JSON.stringify(a.error) : ''));
@@ -1869,6 +1869,14 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
           const raw = v[j] == null ? '' : String(v[j]).trim();
           r[h] = numCols.has(h) ? (raw === '' ? null : Number(raw.replace(/,/g, ''))) : raw;
         });
+        if ('Update Date' in r) {
+          const t = r['Update Date'], M = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+          const p2 = (n) => String(n).padStart(2, '0'); let m;
+          if ((m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))) r['Update Date'] = m[1] + '-' + p2(m[2]) + '-' + p2(m[3]);
+          else if ((m = t.match(/^(\d{1,2})[\s\-\/]+([A-Za-z]{3})[A-Za-z]*[\s\-\/,]+(\d{2,4})$/)) && M[m[2].toLowerCase()]) r['Update Date'] = (m[3].length === 2 ? '20' + m[3] : m[3]) + '-' + p2(M[m[2].toLowerCase()]) + '-' + p2(m[1]);
+          else if ((m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))) { const a2 = +m[1], b2 = +m[2]; const [d, mo] = a2 > 12 ? [a2, b2] : b2 > 12 ? [b2, a2] : [b2, a2]; r['Update Date'] = m[3] + '-' + p2(mo) + '-' + p2(d); }
+          else r['Update Date'] = '';
+        }
         if (r['Hub Name']) rows.push(r);
       });
       return { columns: ['ID', ...head.filter((h) => h)], rows };
@@ -1912,13 +1920,14 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   dash.calc('sn_fill', {
     inputs: ['needs', 'onboarding'],
     title: 'Needs filled by onboarding',
-    description: 'For each hub and vehicle type in Needs: couriers needed, new stars onboarded for that hub and vehicle in the Needs month (2026-11; hub matched case-insensitively), filled = smaller of the two, remaining = needed − filled, extra = onboarded beyond the need.',
+    description: 'For each hub and vehicle type in Needs: couriers needed, and new stars onboarded for that hub and vehicle (hub matched case-insensitively) on or after the latest Update Date of those rows — or, when the sheet has no Update Date, in the Needs month 2026-11; filled = smaller of the two, remaining = needed − filled, extra = onboarded beyond the need; Since = the date counted from.',
     fn: (needs, ob) => {
-      const okOb = snObMonth(ob);
-      const O = d3.rollup(okOb, (v) => v.length, (r) => snKey(r['Hub']) + '|' + String(r['Vehicle'] || '').trim().toLowerCase());
+      const G = d3.group(ob, (r) => snKey(r['Hub']) + '|' + String(r['Vehicle'] || '').trim().toLowerCase());
       return [...d3.group(needs, (r) => snKey(r['Hub Name']) + '|' + String(r['Type'] || '').trim().toLowerCase())].map(([k, v]) => {
-        const need = d3.sum(v, (r) => r['Count'] || 0), got = O.get(k) || 0, filled = Math.min(need, got);
-        return { Hub: v[0]['Hub Name'].trim(), Type: v[0]['Type'], Needed: need, Onboarded: got, Filled: filled, Remaining: need - filled, Extra: got - filled };
+        const since = v.reduce((m, r) => (r['Update Date'] && r['Update Date'] > m ? r['Update Date'] : m), '');
+        const joins = (G.get(k) || []).filter((r) => (since ? String(r['Joined At'] || '') >= since : String(r['Joined At'] || '').slice(0, 7) === window.NEEDS_MONTH));
+        const need = d3.sum(v, (r) => r['Count'] || 0), got = joins.length, filled = Math.min(need, got);
+        return { Hub: v[0]['Hub Name'].trim(), Type: v[0]['Type'], Needed: need, Onboarded: got, Filled: filled, Remaining: need - filled, Extra: got - filled, Since: since || window.NEEDS_MONTH + '-01' };
       }).sort((a, b) => b.Remaining - a.Remaining || a.Hub.localeCompare(b.Hub));
     },
   });
@@ -2147,6 +2156,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       const pc = td(null); const bar = document.createElement('span'); bar.className = 'sn-prog';
       const i = document.createElement('i'); i.style.width = (r.Needed ? 100 * r.Filled / r.Needed : 0) + '%'; bar.appendChild(i); pc.appendChild(bar);
       td(r.Extra ? '+' + f(r.Extra) : '—');
+      td(r.Since, 'af-ltr');
       tbody.appendChild(tr);
     }
   });
@@ -2172,6 +2182,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
   const ndVi = (t) => (t === 'Sedan' ? `<svg class="vi" viewBox="0 0 24 24" fill="currentColor"><path d="${VCAR}"/></svg>` : t === 'Van' ? `<svg class="vi" viewBox="0 0 24 24" fill="currentColor"><path d="${VVAN}"/></svg>` : `<svg class="vi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="17.5" r="3.2"/><circle cx="19" cy="17.5" r="3.2"/><path d="${VBK}"/><path d="${VBD}" fill="currentColor"/></svg>`);
   const ndE = '<small class="e">EGP</small>', ndS = '<span class="star">★</span>';
   const ndShort = (n) => n.replace(/ Hub$/i, '');
+  const ndDay = (iso) => Number(iso.slice(8, 10)) + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(iso.slice(5, 7)) - 1] + ' ' + iso.slice(0, 4);
   const ndSlug = (n) => ndShort(n).toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
   // Hubs in sheet order, each with its zone rows; Star = what is still needed after On boarding joins are taken off.
@@ -2186,7 +2197,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
       const z = ZF.get(r.ID), need = r['Count'] || 0;
       hubs[at.get(name)].zones.push({
         id: r.ID, zone: r['Zone'], type: r['Type'], need, filled: z ? z.Filled : 0, rem: z ? z.Remaining : need,
-        min: r['MIN PAY'], bonus: r['Welcome Bonus'], fixed: r['Fixed (EGP/Day)'], variable: r['Variable (EGP/Parcel)'], note: r['Note of zone'] || '', pri: r['Priority'],
+        min: r['MIN PAY'], bonus: r['Welcome Bonus'], fixed: r['Fixed (EGP/Day)'], variable: r['Variable (EGP/Parcel)'], note: r['Note of zone'] || '', pri: r['Priority'], since: r['Update Date'] || '',
       });
     }
     // Senior of each hub: from LM Report (Target tab), else the senior most new stars of that hub have in On boarding.
@@ -2226,7 +2237,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     const v = (t) => { const r = R.filter((z) => z.type === t); return { n: d3.sum(r, (z) => z.rem), fx: ndRg(r.map((z) => z.fixed)), vr: ndRg(r.map((z) => z.variable)) }; };
     const c = v('Sedan'), m = v('Motorbike'), vn = v('Van');
     const vk = (t, o, l) => `<div class="k"><b>${ndVi(t)}${o.n} ${ndS}</b><span>${l}</span><small><i>Fixed</i> ${o.fx}${ndE}<i> /day</i></small><small><i>Variable</i> ${o.vr}${ndE}<i> /parcel</i></small></div>`;
-    box.innerHTML = `<div class="k hero"><b>${tt} ${ndS}</b><span>Star needed</span><small>${list.length} hub${list.length === 1 ? '' : 's'} - ${R.length} zone line${R.length === 1 ? '' : 's'}</small>${filled ? `<small class="fill">✓ ${filled} filled from On boarding <i>of ${need} requested</i></small>` : ''}</div>`
+    box.innerHTML = `<div class="k hero"><b>${tt} ${ndS}</b><span>Star needed</span><small>${list.length} hub${list.length === 1 ? '' : 's'} - ${R.length} zone line${R.length === 1 ? '' : 's'}</small>${filled ? `<small class="fill">✓ ${filled} filled from On boarding <i>of ${need} requested</i></small>` : ''}${(() => { const ds = [...new Set(all.map((z) => z.since).filter(Boolean))].sort(); return `<small><i>🗓 counting new stars from</i> ${ds.length ? ndDay(ds[ds.length - 1]) + (ds.length > 1 ? ' (latest update)' : '') : 'start of month'}</small>`; })()}</div>`
       + vk('Sedan', c, 'Cars (Sedan)') + vk('Moto', m, 'Motorbikes') + (vn.n ? vk('Van', vn, 'Vans') : '')
       + `<div class="k"><b>${ndRg(R.map((z) => z.min))}${ndE}</b><span>MIN PAY</span></div><div class="k"><b>${ndRg(R.map((z) => z.bonus))}${ndE}</b><span>Welcome Bonus (Nov-Dec)</span></div>`;
   });
@@ -2271,7 +2282,8 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
     }).join('') + '</table></div>';
   const ndCard = (h, btn) => {
     const N = window.ND, open = ndOpenZones(h);
-    return `<div class="card"><div class="top"><b style="font-size:21px">${ndEsc(h.name)} - ${d3.sum(open, (z) => z.rem)} Star ${ndS}${ndTier(h)}<span class="sen-tag">👤 ${ndEsc(h.senior)}</span></b>`
+    const since = h.zones.reduce((m, z) => (z.since > m ? z.since : m), '');
+    return `<div class="card"><div class="top"><b style="font-size:21px">${ndEsc(h.name)} - ${d3.sum(open, (z) => z.rem)} Star ${ndS}${ndTier(h)}<span class="sen-tag">👤 ${ndEsc(h.senior)}</span><span class="sen-tag">🗓 counting from ${since ? ndDay(since) : 'start of month'}</span></b>`
       + (btn ? `<button class="btn" data-act="img-one" data-hub="${ndEsc(h.name)}"${open.length ? '' : ' disabled'}>Create WhatsApp image</button>` : N.mode ? `<span><button class="btn g s" data-act="zones-all" data-hub="${ndEsc(h.name)}">All zones</button> <button class="btn g s" data-act="zones-none" data-hub="${ndEsc(h.name)}">None</button></span>` : '')
       + `</div>${N.mode ? '<p class="sm" style="margin:0 0 6px">Untick the zones you do not need</p>' : ''}${ndTbl(h, N.mode)}</div>`;
   };
