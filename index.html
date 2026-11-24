@@ -1855,7 +1855,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
 
   // ---------- Star Need ----------
   dash.loader('needs', {
-    description: 'Needs Nov sheet as rows: first row names the columns; rows without a hub skipped; Count and money columns read as numbers (commas removed, blank = empty); an Update Date column (any of 16/11/2026, 11/16/2026, 16-Nov-2026, 16 Nov 2026, 2026-11-16) rewritten as YYYY-MM-DD; ID is the sheet row number.',
+    description: 'Needs Nov sheet as rows: first row names the columns; rows without a hub skipped; Count and money columns read as numbers (commas removed, blank = empty); an Update Date column (any of 16/11/2026, 11/16/2026, 16-Nov, 16-Nov-2026, 16 Nov 2026, 2026-11-16; no year = this year) rewritten as YYYY-MM-DD; ID is the sheet row number.',
     fn: ({ answer }) => {
       const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
       if (!a || !Array.isArray(a.values)) throw new Error('Google Sheets returned no values' + (a && a.error ? ': ' + JSON.stringify(a.error) : ''));
@@ -1873,7 +1873,7 @@ body { padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); p
           const t = r['Update Date'], M = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
           const p2 = (n) => String(n).padStart(2, '0'); let m;
           if ((m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))) r['Update Date'] = m[1] + '-' + p2(m[2]) + '-' + p2(m[3]);
-          else if ((m = t.match(/^(\d{1,2})[\s\-\/]+([A-Za-z]{3})[A-Za-z]*[\s\-\/,]+(\d{2,4})$/)) && M[m[2].toLowerCase()]) r['Update Date'] = (m[3].length === 2 ? '20' + m[3] : m[3]) + '-' + p2(M[m[2].toLowerCase()]) + '-' + p2(m[1]);
+          else if ((m = t.match(/^(\d{1,2})[\s\-\/]+([A-Za-z]{3})[A-Za-z]*(?:[\s\-\/,]+(\d{2,4}))?$/)) && M[m[2].toLowerCase()]) r['Update Date'] = (!m[3] ? String(new Date().getFullYear()) : m[3].length === 2 ? '20' + m[3] : m[3]) + '-' + p2(M[m[2].toLowerCase()]) + '-' + p2(m[1]);
           else if ((m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))) { const a2 = +m[1], b2 = +m[2]; const [d, mo] = a2 > 12 ? [a2, b2] : b2 > 12 ? [b2, a2] : [b2, a2]; r['Update Date'] = m[3] + '-' + p2(mo) + '-' + p2(d); }
           else r['Update Date'] = '';
         }
